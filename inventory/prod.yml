@@ -1,0 +1,18 @@
+---
+all:
+  vars:
+    ansible_user: ubuntu
+    ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+  children:
+    clickhouse:
+      hosts:
+        clickhouse-01:
+          ansible_host: 51.250.66.218
+    vector:
+      hosts:
+        vector-01:
+          ansible_host: 84.201.157.164
+    lighthouse:
+      hosts:
+        lighthouse-01:
+          ansible_host: 51.250.14.222

@@ -1,0 +1,47 @@
+---
+- name: Configure ClickHouse
+  hosts: clickhouse
+  become: true
+  tags:
+    - clickhouse
+  pre_tasks:
+    - name: Download ClickHouse repository key
+      ansible.builtin.get_url:
+        url: https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key
+        dest: /usr/share/keyrings/clickhouse.asc
+        mode: '0644'
+  roles:
+    - role: clickhouse
+      clickhouse_repo: '{{ clickhouse_apt_repository }}'
+  tasks:
+    - name: Inspect table
+      ansible.builtin.command:
+        argv:
+          - clickhouse-client
+          - --query
+          - EXISTS TABLE logs.events
+      register: clickhouse_table_state
+      changed_when: false
+      when: not ansible_check_mode
+    - name: Create table
+      ansible.builtin.command:
+        argv:
+          - clickhouse-client
+          - --query
+          - CREATE TABLE logs.events (message String) ENGINE = MergeTree ORDER BY tuple()
+      changed_when: true
+      when: not ansible_check_mode and clickhouse_table_state.stdout == '0'
+- name: Configure Vector
+  hosts: vector
+  become: true
+  tags:
+    - vector
+  roles:
+    - role: vector
+- name: Configure LightHouse
+  hosts: lighthouse
+  become: true
+  tags:
+    - lighthouse
+  roles:
+    - role: lighthouse

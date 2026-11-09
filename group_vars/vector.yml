@@ -1,0 +1,4 @@
+---
+vector_clickhouse_endpoint: http://{{ hostvars[groups['clickhouse'][0]].ansible_host }}:8123
+vector_clickhouse_database: logs
+vector_clickhouse_table: events

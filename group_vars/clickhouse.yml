@@ -1,0 +1,13 @@
+---
+clickhouse_listen_host:
+- 0.0.0.0
+clickhouse_networks_default:
+- 127.0.0.1
+- '{{ hostvars[groups[''vector''][0]].ansible_host }}'
+- '{{ hostvars[groups[''lighthouse''][0]].ansible_host }}'
+clickhouse_dbs_custom:
+- name: logs
+  state: present
+clickhouse_version: '26.10.3.7'
+clickhouse_apt_repository: >-
+  deb [signed-by=/usr/share/keyrings/clickhouse.asc] https://packages.clickhouse.com/deb stable main
